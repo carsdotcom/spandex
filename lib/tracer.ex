@@ -130,7 +130,7 @@ defmodule Spandex.Tracer do
             unquote(body)
           rescue
             exception ->
-              stacktrace = System.stacktrace()
+              stacktrace = __STACKTRACE__
               _ = unquote(__MODULE__).span_error(exception, stacktrace, opts)
               reraise exception, stacktrace
           after
@@ -150,7 +150,7 @@ defmodule Spandex.Tracer do
             unquote(body)
           rescue
             exception ->
-              stacktrace = System.stacktrace()
+              stacktrace = __STACKTRACE__
               _ = unquote(__MODULE__).span_error(exception, stacktrace, opts)
               reraise exception, stacktrace
           after
@@ -293,6 +293,7 @@ defmodule Spandex.Tracer do
           |> Keyword.put(:trace_key, __MODULE__)
           |> Keyword.put(:strategy, env[:strategy] || Spandex.Strategy.Pdict)
           |> Keyword.put(:adapter, env[:adapter])
+          |> Keyword.put(:sender, env[:sender])
         end
       end
     end

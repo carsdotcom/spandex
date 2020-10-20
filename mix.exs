@@ -1,13 +1,13 @@
 defmodule Spandex.Mixfile do
   use Mix.Project
 
-  @version "2.4.2"
+  @version "3.0.2"
 
   def project do
     [
       app: :spandex,
       version: @version,
-      elixir: "~> 1.3",
+      elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -61,7 +61,10 @@ defmodule Spandex.Mixfile do
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_doc, ">= 0.19.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
-      {:git_ops, "~> 0.3.3", only: :dev},
+      {:nimble_parsec, "~> 0.5.3", only: :dev},
+      {:makeup_elixir, "~> 0.14.0", only: :dev},
+      {:git_ops, "~> 2.0.0", only: :dev},
+      {:makeup, "~> 1.0.1", only: :dev},
       {:inch_ex, github: "rrrene/inch_ex", only: [:dev, :test]},
       {:optimal, "~> 0.3.3"},
       {:plug, ">= 1.0.0"},

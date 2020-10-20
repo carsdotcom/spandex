@@ -37,7 +37,7 @@ defmodule Spandex do
     strategy = opts[:strategy]
 
     if strategy.trace_active?(opts[:trace_key]) do
-      Logger.error("Tried to start a trace over top of another trace.")
+      Logger.error("Tried to start a trace over top of another trace: #{name}.")
       {:error, :trace_running}
     else
       do_start_trace(name, opts)
@@ -351,7 +351,7 @@ defmodule Spandex do
     strategy = opts[:strategy]
 
     if strategy.trace_active?(opts[:trace_key]) do
-      Logger.error("Tried to continue a trace over top of another trace.")
+      Logger.error("Tried to continue a trace over top of another trace: #{name}.")
       {:error, :trace_already_present}
     else
       do_continue_trace(name, span_context, opts)
@@ -393,7 +393,7 @@ defmodule Spandex do
     strategy = opts[:strategy]
 
     if strategy.trace_active?(opts[:trace_key]) do
-      Logger.error("Tried to continue a trace over top of another trace.")
+      Logger.error("Tried to continue a trace over top of another trace: #{name}.")
       {:error, :trace_already_present}
     else
       do_continue_trace_from_span(name, span, opts)
@@ -403,14 +403,13 @@ defmodule Spandex do
   @doc """
   Returns the context from a given set of HTTP headers, as determined by the adapter.
   """
-  @spec distributed_context(Plug.Conn.t(), Tracer.opts()) ::
-          {:ok, SpanContext.t()}
-          | {:error, :disabled}
+  @spec distributed_context(Plug.Conn.t(), Tracer.opts()) :: {:ok, SpanContext.t()} | {:error, :disabled}
+  @spec distributed_context(headers(), Tracer.opts()) :: {:ok, SpanContext.t()} | {:error, :disabled}
   def distributed_context(_, :disabled), do: {:error, :disabled}
 
-  def distributed_context(conn, opts) do
+  def distributed_context(metadata, opts) do
     adapter = opts[:adapter]
-    adapter.distributed_context(conn, opts)
+    adapter.distributed_context(metadata, opts)
   end
 
   @doc """
@@ -454,6 +453,8 @@ defmodule Spandex do
     adapter = opts[:adapter]
 
     with {:ok, top_span} <- span(name, opts, span_context, adapter) do
+      Logger.metadata(trace_id: span_context.trace_id, span_id: top_span.id)
+
       trace = %Trace{
         id: span_context.trace_id,
         priority: span_context.priority,

@@ -47,7 +47,7 @@ defmodule Spandex.Test.SpandexTest do
           assert {:error, :trace_running} = Spandex.start_trace("duplicate_span", opts)
         end)
 
-      assert String.contains?(log, "[error] Tried to start a trace over top of another trace.")
+      assert String.contains?(log, "[error] Tried to start a trace over top of another trace")
     end
 
     test "returns an error if tracing is disabled" do
@@ -76,10 +76,10 @@ defmodule Spandex.Test.SpandexTest do
   describe "Spandex.start_span/2" do
     test "creates a new Span under the active Span with the given name" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
       assert {:ok, %Span{} = span} = Spandex.start_span("span_name", opts)
-      assert %Span{id: span_id, name: "span_name", parent_id: ^root_span_id} = span
+      assert %Span{id: _span_id, name: "span_name", parent_id: ^root_span_id} = span
     end
 
     test "returns an error if there is not a trace in progress" do
@@ -93,14 +93,14 @@ defmodule Spandex.Test.SpandexTest do
 
     test "inherits service and resource from parent span if not specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert {:ok, %Span{} = span} = Spandex.start_span("span_name", @base_opts)
       assert %Span{name: "span_name", service: :test_service, resource: "test_resource"} = span
     end
 
     test "returns an error if invalid options are specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:error, validation_errors} = Spandex.start_span("span_name", @base_opts ++ [type: "not an atom"])
 
@@ -125,9 +125,9 @@ defmodule Spandex.Test.SpandexTest do
   describe "Spandex.update_span/1" do
     test "modifies the current span" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{} = root_span = Spandex.current_span(@base_opts)
-      assert {:ok, %Span{} = span} = Spandex.start_span("span_name", opts)
+      assert {:ok, %Span{} = _span} = Spandex.start_span("span_name", opts)
 
       updated_opts = Keyword.put(@base_opts, :sql_query, query: "SELECT * FROM users;")
       assert {:ok, %Span{} = span} = Spandex.update_span(updated_opts)
@@ -157,7 +157,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if invalid options are specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:error, validation_errors} = Spandex.update_span(@base_opts ++ [type: "not an atom"])
 
@@ -168,9 +168,9 @@ defmodule Spandex.Test.SpandexTest do
   describe "Spandex.update_span/2" do
     test "with false as the second argument, acts like update_span/1" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{} = root_span = Spandex.current_span(@base_opts)
-      assert {:ok, %Span{} = span} = Spandex.start_span("span_name", opts)
+      assert {:ok, %Span{} = _span} = Spandex.start_span("span_name", opts)
 
       updated_opts = Keyword.put(@base_opts, :sql_query, query: "SELECT * FROM users;")
       assert {:ok, %Span{} = span} = Spandex.update_span(updated_opts)
@@ -184,7 +184,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "with true as the second argument, acts like update_top_span/1" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
       assert {:ok, %Span{id: span_id}} = Spandex.start_span("span_name", opts)
 
@@ -201,7 +201,7 @@ defmodule Spandex.Test.SpandexTest do
   describe "Spandex.update_top_span/1" do
     test "modifies the root span in the trace" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
       assert {:ok, %Span{id: span_id}} = Spandex.start_span("span_name", opts)
 
@@ -225,7 +225,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if invalid options are specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:error, validation_errors} = Spandex.update_top_span(@base_opts ++ [type: "not an atom"])
 
@@ -260,7 +260,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if invalid options are specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:error, validation_errors} = Spandex.update_all_spans(@base_opts ++ [type: "not an atom"])
 
@@ -271,7 +271,7 @@ defmodule Spandex.Test.SpandexTest do
   describe "Spandex.finish_trace/1" do
     test "sends all spans to the Adapter's default sender by default" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
       assert {:ok, %Span{id: span_id}} = Spandex.start_span("span_name", opts)
 
@@ -287,7 +287,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "sends spans to an overridden sender" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
       assert {:ok, %Span{id: span_id}} = Spandex.start_span("span_name", opts)
 
@@ -303,9 +303,9 @@ defmodule Spandex.Test.SpandexTest do
 
     test "ensures all spans have a completion time" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
-      assert %Span{id: root_span_id} = Spandex.current_span(@base_opts)
-      assert {:ok, %Span{id: span_id}} = Spandex.start_span("span_name", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
+      assert %Span{id: _root_span_id} = Spandex.current_span(@base_opts)
+      assert {:ok, %Span{id: _span_id}} = Spandex.start_span("span_name", opts)
 
       assert {:ok, _} = Spandex.finish_trace(@base_opts)
       spans = Util.sent_spans()
@@ -346,9 +346,9 @@ defmodule Spandex.Test.SpandexTest do
 
     test "does not return an error if invalid update options are supplied" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
-      assert {:ok, %Trace{id: trace_id}} = Spandex.finish_trace(@base_opts ++ [type: "not an atom"])
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.finish_trace(@base_opts ++ [type: "not an atom"])
     end
   end
 
@@ -406,7 +406,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "ignores any span update failures" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:ok, %Span{}} = Spandex.finish_span(@base_opts ++ [type: "not an atom"])
     end
@@ -440,7 +440,7 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if invalid options are specified" do
       opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: trace_id}} = Spandex.start_trace("root_span", opts)
+      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
 
       assert {:error, validation_errors} =
                Spandex.span_error(
@@ -448,6 +448,7 @@ defmodule Spandex.Test.SpandexTest do
                  @fake_stacktrace,
                  @base_opts ++ [type: "not an atom"]
                )
+
       assert {:type, "must be of type :atom"} in validation_errors
     end
   end
@@ -558,7 +559,7 @@ defmodule Spandex.Test.SpandexTest do
           assert {:error, :trace_already_present} = Spandex.continue_trace("span_name", span_context, opts)
         end)
 
-      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace.")
+      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace")
     end
 
     test "returns an error if tracing is disabled" do
@@ -572,6 +573,20 @@ defmodule Spandex.Test.SpandexTest do
       assert {:error, validation_errors} = Spandex.continue_trace("span_name", span_context, opts)
 
       assert {:type, "must be of type :atom"} in validation_errors
+    end
+
+    test "adds span_id, trace_id to log metadata" do
+      opts = @base_opts ++ @span_opts
+      span_context = %SpanContext{trace_id: 123, parent_id: 456}
+
+      log =
+        capture_log(fn ->
+          Spandex.continue_trace("root_span", span_context, opts)
+          Logger.info("test logs")
+        end)
+
+      assert String.contains?(log, "trace_id")
+      assert String.contains?(log, "span_id")
     end
   end
 
@@ -591,7 +606,7 @@ defmodule Spandex.Test.SpandexTest do
           assert {:error, :trace_already_present} = Spandex.continue_trace("span_name", 123, 456, opts)
         end)
 
-      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace.")
+      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace")
     end
 
     test "returns an error if tracing is disabled" do
@@ -603,6 +618,19 @@ defmodule Spandex.Test.SpandexTest do
                Spandex.continue_trace("span_name", 123, 456, @base_opts ++ [type: "not an atom"])
 
       assert {:type, "must be of type :atom"} in validation_errors
+    end
+
+    test "adds span_id, trace_id to log metadata" do
+      opts = @base_opts ++ @span_opts
+
+      log =
+        capture_log(fn ->
+          Spandex.continue_trace("root_span", 123, 456, opts)
+          Logger.info("test logs")
+        end)
+
+      assert String.contains?(log, "trace_id")
+      assert String.contains?(log, "span_id")
     end
   end
 
@@ -627,7 +655,7 @@ defmodule Spandex.Test.SpandexTest do
                    Spandex.continue_trace_from_span("root_span", existing_span, @base_opts)
         end)
 
-      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace.")
+      assert String.contains?(log, "[error] Tried to continue a trace over top of another trace")
     end
 
     test "returns an error if tracing is disabled" do
@@ -650,7 +678,7 @@ defmodule Spandex.Test.SpandexTest do
     end
   end
 
-  describe "Spandex.distributed_context/2" do
+  describe "Spandex.distributed_context/2 with Plug.Conn" do
     test "returns a distributed context representation" do
       conn =
         :get
@@ -671,6 +699,28 @@ defmodule Spandex.Test.SpandexTest do
     test "returns an error if tracing is disabled" do
       conn = Plug.Test.conn(:get, "/")
       assert {:error, :disabled} == Spandex.distributed_context(conn, :disabled)
+    end
+  end
+
+  describe "Spandex.distributed_context/2 with headers()" do
+    test "returns a distributed context representation" do
+      list_headers = [
+        {"x-test-trace-id", 1234},
+        {"x-test-parent-id", 5678},
+        {"x-test-sampling-priority", 10}
+      ]
+
+      assert {:ok, %SpanContext{} = span_context} = Spandex.distributed_context(list_headers, @base_opts)
+      assert %SpanContext{trace_id: 1234, parent_id: 5678, priority: 10} = span_context
+
+      map_headers = %{
+        "x-test-trace-id" => 1234,
+        "x-test-parent-id" => 5678,
+        "x-test-sampling-priority" => 10
+      }
+
+      assert {:ok, %SpanContext{} = span_context} = Spandex.distributed_context(map_headers, @base_opts)
+      assert %SpanContext{trace_id: 1234, parent_id: 5678, priority: 10} = span_context
     end
   end
 
